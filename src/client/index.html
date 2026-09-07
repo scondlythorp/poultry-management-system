@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Poultry Management</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Simple Poultry Management</h1>
+  </header>
+
+  <main class="container">
+
+    <!-- Global status banner for API errors / success messages -->
+    <div id="statusBanner" class="status-banner" role="alert" hidden></div>
+
+    <!-- House selector -->
+    <section class="card">
+      <h2>Poultry House</h2>
+      <label for="houseSelect">Select House</label>
+      <select id="houseSelect">
+        <option value="">-- No houses yet --</option>
+      </select>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="card">
+      <h2>Dashboard</h2>
+      <div id="dashboardEmpty" class="empty-state">
+        Select a poultry house to see its statistics.
+      </div>
+      <div id="dashboardStats" class="stats-grid" hidden>
+        <div class="stat-box">
+          <span class="stat-label">Current Birds</span>
+          <span class="stat-value" id="statCurrentBirds">–</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Mortality</span>
+          <span class="stat-value" id="statMortality">–</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Feed Used (kg)</span>
+          <span class="stat-value" id="statFeed">–</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Eggs Collected</span>
+          <span class="stat-value" id="statEggs">–</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Create House -->
+    <section class="card">
+      <h2>Create Poultry House</h2>
+      <form id="houseForm" novalidate>
+        <div class="form-group">
+          <label for="houseName">House Name</label>
+          <input type="text" id="houseName" name="houseName" required />
+          <span class="field-error" id="houseNameError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="birdsPlaced">Birds Placed</label>
+          <input type="number" id="birdsPlaced" name="birdsPlaced" min="1" step="1" required />
+          <span class="field-error" id="birdsPlacedError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="dateCreated">Date Created</label>
+          <input type="date" id="dateCreated" name="dateCreated" required />
+          <span class="field-error" id="dateCreatedError"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create House</button>
+      </form>
+    </section>
+
+    <!-- Record Daily Information -->
+    <section class="card">
+      <h2>Record Daily Information</h2>
+      <form id="dailyRecordForm" novalidate>
+        <div class="form-group">
+          <label for="recordDate">Date</label>
+          <input type="date" id="recordDate" name="recordDate" required />
+          <span class="field-error" id="recordDateError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="mortality">Mortality</label>
+          <input type="number" id="mortality" name="mortality" min="0" step="1" required />
+          <span class="field-error" id="mortalityError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="feedUsed">Feed Used (kg)</label>
+          <input type="number" id="feedUsed" name="feedUsed" min="0" step="0.01" required />
+          <span class="field-error" id="feedUsedError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="eggsCollected">Eggs Collected</label>
+          <input type="number" id="eggsCollected" name="eggsCollected" min="0" step="1" required />
+          <span class="field-error" id="eggsCollectedError"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Daily Record</button>
+      </form>
+    </section>
+
+    <!-- Daily Records Table -->
+    <section class="card">
+      <h2>Daily Records</h2>
+      <div id="recordsEmpty" class="empty-state">
+        No daily records yet for this house.
+      </div>
+      <div class="table-wrapper">
+        <table id="recordsTable" hidden>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Mortality</th>
+              <th>Feed Used (kg)</th>
+              <th>Eggs Collected</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

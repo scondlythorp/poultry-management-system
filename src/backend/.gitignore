@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Environment variables (never commit real secrets)
+.env
+
+# Prisma generated client (regenerated via `prisma generate`)
+# Keeping this ignored is optional; many teams commit it.
+# Uncomment the next line if you don't want it in Git:
+# node_modules/.prisma/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
