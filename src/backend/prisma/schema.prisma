@@ -12,7 +12,6 @@ model PoultryHouse {
   name         String
   birdsPlaced  Int
   createdAt    DateTime      @default(now())
-
   dailyRecords DailyRecord[]
 
   @@map("poultry_houses")
@@ -26,8 +25,7 @@ model DailyRecord {
   feedUsedKg    Decimal      @db.Decimal(10, 2)
   eggsCollected Int          @default(0)
   createdAt     DateTime     @default(now())
-
-  house PoultryHouse @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  house         PoultryHouse @relation(fields: [houseId], references: [id], onDelete: Cascade)
 
   @@unique([houseId, date])
   @@index([houseId])
