@@ -131,6 +131,12 @@ input:focus {
   border: 1px solid var(--color-success);
 }
 
+.status-banner.info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+
 .empty-state {
   color: var(--color-muted);
   font-size: 0.95rem;

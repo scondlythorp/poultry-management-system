@@ -12,16 +12,16 @@ app.use(cors());
 // Parse incoming JSON request bodies into req.body.
 app.use(express.json());
 
-// health checkup
-app.get("/api/health", (req, res) => {
+// health checkup (supports /api/health and /health)
+app.get(["/api/health", "/health"], (req, res) => {
   res.status(200).json({
     success: true,
     message: "API is running",
   });
 });
 
-// All house + nested daily-record routes.
-app.use("/api/houses", houseRoutes);
+// All house + nested daily-record routes (supports both /api/houses and /houses)
+app.use(["/api/houses", "/houses"], houseRoutes);
 
 // Catch-all for unknown /api routes.
 app.all("/api/*", (req, res) => {

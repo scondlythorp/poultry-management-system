@@ -48,6 +48,12 @@ function showSuccess(message) {
   }, 3000);
 }
 
+function showInfo(message) {
+  statusBanner.textContent = message;
+  statusBanner.className = "status-banner info";
+  statusBanner.hidden = false;
+}
+
 function clearStatus() {
   statusBanner.hidden = true;
   statusBanner.textContent = "";
@@ -78,14 +84,142 @@ function showFieldErrors(form, errors) {
   });
 }
 
+// ---------- Local Storage Fallback Store ----------
+// Ensures 100% functionality even on static hosts (GitHub Pages, Vercel without proxy) where /api is not deployed.
+let isLocalFallbackActive = false;
+
+function getLocalData() {
+  try {
+    const rawHouses = localStorage.getItem("pms_houses");
+    const rawRecords = localStorage.getItem("pms_records");
+    let houses = rawHouses ? JSON.parse(rawHouses) : null;
+    let records = rawRecords ? JSON.parse(rawRecords) : null;
+
+    if (!Array.isArray(houses) || houses.length === 0) {
+      houses = [
+        { id: 1, name: "House A", birdsPlaced: 500, createdAt: "2026-09-01T00:00:00.000Z" },
+      ];
+      localStorage.setItem("pms_houses", JSON.stringify(houses));
+    }
+    if (!Array.isArray(records)) {
+      records = [
+        { id: 1, houseId: 1, date: "2026-09-02T00:00:00.000Z", mortality: 3, feedUsedKg: 25.5, eggsCollected: 420, createdAt: "2026-09-02T00:00:00.000Z" },
+        { id: 2, houseId: 1, date: "2026-09-03T00:00:00.000Z", mortality: 2, feedUsedKg: 26, eggsCollected: 430, createdAt: "2026-09-03T00:00:00.000Z" },
+      ];
+      localStorage.setItem("pms_records", JSON.stringify(records));
+    }
+    return { houses, records };
+  } catch {
+    return {
+      houses: [{ id: 1, name: "House A", birdsPlaced: 500, createdAt: new Date().toISOString() }],
+      records: [],
+    };
+  }
+}
+
+function handleLocalRequest(path, options = {}) {
+  const { houses, records } = getLocalData();
+  const method = (options.method || "GET").toUpperCase();
+  const body = options.body ? JSON.parse(options.body) : {};
+
+  // GET /houses
+  if (path === "/houses" && method === "GET") {
+    return houses.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  // POST /houses
+  if (path === "/houses" && method === "POST") {
+    const newHouse = {
+      id: Date.now(),
+      name: body.name.trim(),
+      birdsPlaced: parseInt(body.birdsPlaced, 10),
+      createdAt: new Date(body.createdAt).toISOString(),
+    };
+    houses.push(newHouse);
+    localStorage.setItem("pms_houses", JSON.stringify(houses));
+    return newHouse;
+  }
+
+  // GET /houses/:id/dashboard
+  const dashMatch = path.match(/^\/houses\/(\d+)\/dashboard$/);
+  if (dashMatch && method === "GET") {
+    const houseId = parseInt(dashMatch[1], 10);
+    const house = houses.find((h) => h.id === houseId);
+    if (!house) throw new Error("Poultry house not found");
+    const houseRecords = records.filter((r) => r.houseId === houseId);
+    const totalMortality = houseRecords.reduce((sum, r) => sum + r.mortality, 0);
+    const totalFeedUsedKg = houseRecords.reduce((sum, r) => sum + r.feedUsedKg, 0);
+    const totalEggsCollected = houseRecords.reduce((sum, r) => sum + r.eggsCollected, 0);
+    const currentBirds = Math.max(0, house.birdsPlaced - totalMortality);
+    return {
+      houseId: house.id,
+      houseName: house.name,
+      birdsPlaced: house.birdsPlaced,
+      currentBirds,
+      totalMortality,
+      totalFeedUsedKg,
+      totalEggsCollected,
+    };
+  }
+
+  // GET /houses/:id/daily-records
+  const recsMatch = path.match(/^\/houses\/(\d+)\/daily-records$/);
+  if (recsMatch && method === "GET") {
+    const houseId = parseInt(recsMatch[1], 10);
+    return records
+      .filter((r) => r.houseId === houseId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  // POST /houses/:id/daily-records
+  if (recsMatch && method === "POST") {
+    const houseId = parseInt(recsMatch[1], 10);
+    const house = houses.find((h) => h.id === houseId);
+    if (!house) throw new Error("Poultry house not found");
+
+    const dateStr = new Date(body.date).toISOString().split("T")[0];
+    const exists = records.some(
+      (r) => r.houseId === houseId && new Date(r.date).toISOString().split("T")[0] === dateStr
+    );
+    if (exists) throw new Error("A daily record for this house and date already exists.");
+
+    const houseRecords = records.filter((r) => r.houseId === houseId);
+    const currentMortality = houseRecords.reduce((sum, r) => sum + r.mortality, 0);
+    const currentBirds = house.birdsPlaced - currentMortality;
+    const mortality = parseInt(body.mortality, 10);
+
+    if (mortality > currentBirds) {
+      throw new Error(`Mortality (${mortality}) cannot exceed current bird count (${currentBirds}).`);
+    }
+
+    const newRecord = {
+      id: Date.now(),
+      houseId,
+      date: new Date(body.date).toISOString(),
+      mortality,
+      feedUsedKg: parseFloat(body.feedUsedKg),
+      eggsCollected: parseInt(body.eggsCollected, 10),
+      createdAt: new Date().toISOString(),
+    };
+    records.push(newRecord);
+    localStorage.setItem("pms_records", JSON.stringify(records));
+    return newRecord;
+  }
+
+  throw new Error("Route not found");
+}
+
 // ---------- API helper ----------
 
 /**
  * Wraps fetch() with consistent JSON handling and error propagation.
- * Every backend response follows { success, data } or
- * { success: false, message, errors? }, so we normalize around that.
+ * Seamlessly falls back to local storage if the API server is unavailable or 404s.
  */
 async function apiRequest(path, options = {}) {
+  if (isLocalFallbackActive) {
+    return handleLocalRequest(path, options);
+  }
+
   let response;
   try {
     response = await fetch(`${API_BASE}${path}`, {
@@ -93,8 +227,10 @@ async function apiRequest(path, options = {}) {
       ...options,
     });
   } catch (networkErr) {
-    // fetch() itself failed - server unreachable, CORS, offline, etc.
-    throw new Error("Unable to reach the server. Please check your connection.");
+    console.warn("[PMS] Network error reaching API, switching to local store:", networkErr.message);
+    isLocalFallbackActive = true;
+    showInfo("Running in local storage mode (backend API unreachable).");
+    return handleLocalRequest(path, options);
   }
 
   let body;
@@ -102,10 +238,22 @@ async function apiRequest(path, options = {}) {
   try {
     body = rawText ? JSON.parse(rawText) : {};
   } catch {
-    if (!response.ok) {
-      throw new Error(`Server returned error ${response.status} (${response.statusText || "HTTP Error"}).`);
+    // If backend returned HTML (e.g. 404 from static host like GitHub Pages or Vercel missing rewrite)
+    if (response.status === 404 || !response.ok) {
+      console.warn(`[PMS] API returned HTTP ${response.status} (non-JSON), switching to local store.`);
+      isLocalFallbackActive = true;
+      showInfo("Running in local storage mode (backend API not hosted on this URL).");
+      return handleLocalRequest(path, options);
     }
     throw new Error("The server returned an unexpected response format.");
+  }
+
+  // If Express or server returned a 404 Route not found
+  if (response.status === 404) {
+    console.warn("[PMS] API endpoint 404, switching to local store.");
+    isLocalFallbackActive = true;
+    showInfo("Running in local storage mode (backend API not found).");
+    return handleLocalRequest(path, options);
   }
 
   if (!response.ok || !body.success) {
