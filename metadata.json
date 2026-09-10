@@ -1,0 +1,6 @@
+{
+  "name": "Poultry Management System",
+  "description": "A poultry management system to track poultry houses, daily records, mortality, feed usage, and egg collection.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
