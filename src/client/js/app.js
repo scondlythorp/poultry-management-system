@@ -6,8 +6,10 @@
  * as a data store — the API + PostgreSQL are the single source of truth.
  * Refreshing the page always re-fetches from the server.
  */
-
-const API_BASE = "http://localhost:3000/api";
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000/api"
+    : "/api";
 
 // Tracks which house is currently selected, so we know which
 // house to attach new daily records to and which dashboard to show.
