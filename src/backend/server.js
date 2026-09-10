@@ -1,7 +1,8 @@
 require("dotenv").config();
 const app = require("./app");
 
-const PORT = process.env.PORT || 3000;
+// Port 3000 is hardcoded and required by the reverse proxy infrastructure.
+const PORT = 3000;
 const HOST = "0.0.0.0";
 
 app.listen(PORT, HOST, () => {

@@ -98,10 +98,14 @@ async function apiRequest(path, options = {}) {
   }
 
   let body;
+  const rawText = await response.text();
   try {
-    body = await response.json();
+    body = rawText ? JSON.parse(rawText) : {};
   } catch {
-    throw new Error("The server returned an unexpected response.");
+    if (!response.ok) {
+      throw new Error(`Server returned error ${response.status} (${response.statusText || "HTTP Error"}).`);
+    }
+    throw new Error("The server returned an unexpected response format.");
   }
 
   if (!response.ok || !body.success) {

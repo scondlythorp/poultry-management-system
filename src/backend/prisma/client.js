@@ -158,10 +158,57 @@ const hasDatabaseUrl =
   process.env.DATABASE_URL.trim() !== "" &&
   !process.env.DATABASE_URL.includes("localhost:5432");
 
+function createSafePrisma(realPrisma, fallbackPrisma) {
+  let useFallback = false;
+
+  const createModelProxy = (modelName) => {
+    return new Proxy({}, {
+      get(target, prop) {
+        return async (...args) => {
+          if (useFallback) {
+            return fallbackPrisma[modelName][prop](...args);
+          }
+          try {
+            return await realPrisma[modelName][prop](...args);
+          } catch (err) {
+            const isConnectionError =
+              err.code === "P1001" ||
+              err.code === "P1000" ||
+              err.code === "P1002" ||
+              err.code === "P1003" ||
+              (err.message && (
+                err.message.includes("Can't reach database") ||
+                err.message.includes("connection closed") ||
+                err.message.includes("ECONNREFUSED") ||
+                err.message.includes("ENOTFOUND")
+              ));
+
+            if (isConnectionError) {
+              console.warn(`[AI Studio] Database connection error (${err.message}), switching to in-memory store for ${modelName}.${prop}`);
+              useFallback = true;
+              return fallbackPrisma[modelName][prop](...args);
+            }
+            throw err;
+          }
+        };
+      },
+    });
+  };
+
+  return new Proxy(realPrisma, {
+    get(target, prop) {
+      if (prop === "poultryHouse" || prop === "dailyRecord") {
+        return createModelProxy(prop);
+      }
+      return target[prop] || fallbackPrisma[prop];
+    },
+  });
+}
+
 if (hasDatabaseUrl) {
   try {
     const { PrismaClient } = require("@prisma/client");
-    prisma = new PrismaClient();
+    prisma = createSafePrisma(new PrismaClient(), mockPrisma);
   } catch (err) {
     console.warn("[AI Studio] PrismaClient initialization failed, falling back to in-memory store:", err.message);
     prisma = mockPrisma;
