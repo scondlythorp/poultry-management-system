@@ -1,208 +1,160 @@
 # Poultry Management System
 
-This project is a small full-stack app for managing poultry houses and daily farm records. The goal is simple: create houses, enter production data for each day, and view a live summary of birds, feed, eggs, and mortality.
+A full-stack poultry farm management application for tracking poultry houses and recording daily production metrics (bird population, mortality, feed usage, and egg collection) with live dashboard statistics.
 
-It was built as a practical assessment app, so the scope stays focused on the core workflow without auth, billing, reporting dashboards beyond the basics, or extra business layers.
+---
 
-## What it does
+## Features
 
-- Create poultry houses with a name, initial bird count, and date
-- Record daily metrics for each house:
-  - mortality
-  - feed used (kg)
-  - eggs collected
-- Prevent duplicate daily entries for the same house on the same date
-- Block invalid records where mortality would exceed the current bird count
-- Show per-house dashboard totals calculated live from the database
+- **Poultry House Management**: Register houses with initial bird counts and placement dates.
+- **Daily Metric Logging**: Record daily mortality, feed consumption (kg), and egg collection.
+- **Strict Business Logic & Validation**:
+  - Validates all inputs server-side with **Zod**.
+  - Prevents duplicate daily entries for the same house on the same calendar date.
+  - Enforces biological constraints: mortality cannot exceed current live bird count.
+- **Live Aggregated Dashboard**: Instant calculation of total mortality, total feed used, total eggs collected, and current live bird population.
+- **Zero-Config In-Memory Mode**: Works immediately out of the box with built-in mock data—no local PostgreSQL installation required to get started.
+- **PostgreSQL + Prisma**: Seamlessly connects to a real PostgreSQL database whenever `DATABASE_URL` is configured.
+- **Multi-Platform Deployment Ready**: Pre-configured for Google Cloud Run, AI Studio, Vercel, Render/Railway, or static hosts with local storage fallback.
 
-## Tech stack
+---
 
-- Frontend: HTML, CSS, vanilla JavaScript
-- Backend: Node.js + Express
-- Database: PostgreSQL
-- ORM: Prisma
-- Validation: Zod
+## Tech Stack
 
-## Project structure
+- **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3 with responsive custom design
+- **Backend**: Node.js & Express
+- **Database / ORM**: Prisma ORM with PostgreSQL (and zero-config in-memory fallback)
+- **Validation**: Zod schema validation
+- **Deployment**: Node.js standalone server, Cloud Run, Vercel serverless functions
+
+---
+
+## Project Structure
 
 ```text
 poultry_management_system/
+├── api/
+│   └── index.js              # Serverless entry point (Vercel)
+├── public/                   # Static frontend assets (served by Express)
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── index.html
 ├── src/
 │   ├── backend/
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── prisma/
-│   │   ├── routes/
-│   │   ├── validators/
-│   │   ├── app.js
-│   │   ├── server.js
-│   │   └── package.json
-│   └── client/
-│       ├── css/
-│       ├── js/
-│       └── index.html
+│   │   ├── controllers/      # Express route controllers (houses, daily records)
+│   │   ├── middleware/       # Error handling and validation wrappers
+│   │   ├── prisma/           # Prisma schema, client, and in-memory store
+│   │   ├── routes/           # Express router endpoints
+│   │   ├── validators/       # Zod schemas & business logic rules
+│   │   ├── app.js            # Express application setup
+│   │   └── server.js         # HTTP server listener
+│   └── client/               # Client source files
+├── server.js                 # Root entry point
+├── package.json              # Dependencies and run scripts
+├── vercel.json               # Serverless rewrite rules for Vercel
 └── README.md
 ```
 
-## Requirements
+---
 
-- Node.js 18+
-- PostgreSQL 13+
+## Quick Start (Zero-Config)
 
-## Setup
+You can run the application immediately without installing or configuring PostgreSQL.
 
-From the backend folder:
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```bash
-cd src/backend
-npm install
-```
+2. **Start the development server**:
+   ```bash
+   npm start
+   ```
 
-Create a `.env` file in `src/backend` with your database connection and port:
+3. **Open the application**:
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-```env
-DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/poultry_farm_db"
-PORT=3000
-```
+The Express server automatically hosts both the API endpoints (`/api/*`) and the frontend interface (`/public`).
 
-Make sure the PostgreSQL database already exists before running Prisma migrations.
+---
 
-## Database setup
+## Using PostgreSQL (Optional)
 
-Run the migration to create the schema:
+To connect to a persistent PostgreSQL database:
 
-```bash
-cd src/backend
-npx prisma migrate dev --name init
-```
+1. Create a `.env` file in the project root (or set the environment variable):
+   ```env
+   DATABASE_URL="postgresql://username:password@localhost:5432/poultry_farm_db"
+   ```
 
-If you change the Prisma schema later, run a new migration:
+2. Generate the Prisma client and apply migrations:
+   ```bash
+   npx prisma generate --schema=src/backend/prisma/schema.prisma
+   npx prisma migrate dev --name init --schema=src/backend/prisma/schema.prisma
+   ```
 
-```bash
-npx prisma migrate dev --name <description>
-```
+3. Start the application:
+   ```bash
+   npm start
+   ```
 
-## Running the app
+*Note: If the database is ever unreachable or unconfigured, the app automatically and safely falls back to the in-memory store so it never crashes.*
 
-Start the backend:
+---
 
-```bash
-cd src/backend
-npm start
-```
+## API Reference
 
-You should see output similar to:
-
-```text
-Poultry management API running on http://localhost:3000
-```
-
-Check the health endpoint:
-
-```bash
-curl http://localhost:3000/api/health
-```
-
-Expected response:
-
-```json
-{ "success": true, "message": "API is running" }
-```
-
-Open the frontend in a browser from `src/client/index.html`, or serve it with a static server:
-
-```bash
-cd src/client
-npx serve .
-```
-
-The frontend is configured to call the API at `http://localhost:3000/api` by default.
-
-## API overview
+### Health Check
+- `GET /api/health` — Check API availability.
 
 ### Houses
+- `GET /api/houses` — List all registered houses (newest first).
+- `POST /api/houses` — Register a new poultry house.
+  - Body: `{"name": "House A", "birdsPlaced": 500, "createdAt": "2026-09-01"}`
+- `GET /api/houses/:id` — Retrieve a single house by ID.
+- `GET /api/houses/:id/dashboard` — Live computed summary:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "houseId": 1,
+      "houseName": "House A",
+      "birdsPlaced": 500,
+      "currentBirds": 495,
+      "totalMortality": 5,
+      "totalFeedUsedKg": 51.5,
+      "totalEggsCollected": 850
+    }
+  }
+  ```
 
-- `GET /api/houses` - list all houses
-- `POST /api/houses` - create a house
-- `GET /api/houses/:id` - get a single house
-- `GET /api/houses/:id/dashboard` - get live dashboard stats
+### Daily Records
+- `GET /api/houses/:id/daily-records` — List all daily entries for a house.
+- `POST /api/houses/:id/daily-records` — Log a daily record:
+  - Body: `{"date": "2026-09-02", "mortality": 3, "feedUsedKg": 25.5, "eggsCollected": 420}`
 
-### Daily records
+---
 
-- `GET /api/houses/:id/daily-records` - list records for a house
-- `POST /api/houses/:id/daily-records` - create a record
+## Business Logic & Validation Rules
 
-### Response format
+- **Houses**:
+  - `name`: Non-empty string.
+  - `birdsPlaced`: Positive integer (`> 0`).
+  - `createdAt`: Valid ISO date.
+- **Daily Records**:
+  - `date`: Valid date string (strictly one entry per house per calendar date).
+  - `mortality`: Non-negative integer (`>= 0`).
+  - `feedUsedKg`: Non-negative decimal (`>= 0`).
+  - `eggsCollected`: Non-negative integer (`>= 0`).
+  - **Biological Constraint**: Daily mortality cannot exceed the remaining live bird count.
 
-Success:
+---
 
-```json
-{ "success": true, "data": {} }
-```
+## Deployment Options
 
-Error:
-
-```json
-{ "success": false, "message": "Poultry house not found" }
-```
-
-Validation error:
-
-```json
-{
-  "success": false,
-  "message": "Validation failed",
-  "errors": [{ "field": "birdsPlaced", "message": "Birds placed must be greater than zero" }]
-}
-```
-
-## Validation rules
-
-### House
-
-- `name`: required, non-empty string
-- `birdsPlaced`: required integer, must be greater than 0
-- `createdAt`: required valid date
-
-### Daily record
-
-- `date`: required valid date
-- `mortality`: integer, minimum 0
-- `feedUsedKg`: number, minimum 0
-- `eggsCollected`: integer, minimum 0
-- `mortality` cannot exceed the current bird count for that house
-- only one record is allowed per house per date
-
-## Dashboard calculation
-
-The dashboard values are calculated from the database on each request:
-
-```text
-totalMortality    = sum of all recorded mortality for the house
-totalFeedUsedKg   = sum of feed used for the house
-totalEggsCollected = sum of eggs collected for the house
-currentBirds      = birdsPlaced - totalMortality
-```
-
-## Example requests
-
-```bash
-# Create a house
-curl -X POST http://localhost:3000/api/houses \
-  -H "Content-Type: application/json" \
-  -d '{"name":"House A","birdsPlaced":500,"createdAt":"2026-09-07"}'
-
-# Add a daily record
-curl -X POST http://localhost:3000/api/houses/1/daily-records \
-  -H "Content-Type: application/json" \
-  -d '{"date":"2026-09-07","mortality":3,"feedUsedKg":25.5,"eggsCollected":420}'
-
-# Fetch dashboard
-curl http://localhost:3000/api/houses/1/dashboard
-```
-
-## Notes
-
-- The app uses server-side validation and does not trust the frontend alone.
-- `.env` should be kept local and not committed.
-- This project intentionally avoids auth and broader farm management features, since the scope is limited to the requested workflow.
+- **Google Cloud Run / AI Studio**: Fully compatible out of the box with the internal reverse proxy on port `3000` or standard Cloud Run dynamic port injection.
+- **Vercel**: Includes `vercel.json` routing all `/api/*` requests to `/api/index.js` while serving the frontend statically.
+- **Render / Railway / Heroku**: Reads `PORT` dynamically and binds to `0.0.0.0`.
+- **Static Hosting (GitHub Pages)**: If the frontend is hosted without a Node.js server, the frontend automatically activates a browser `localStorage` engine so the interface remains fully operational.
