@@ -4,125 +4,339 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Poultry Management System</title>
+  <meta name="description" content="A refined poultry flock management system to track houses, daily records, mortality, feed usage, and egg collection with precision." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="app-header">
-    <h1>Poultry Management System</h1>
+
+  <!-- Elegant App Header -->
+  <header class="app-header" id="appHeader">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7c1.5 0 2.8 1.1 3 2.5a3.5 3.5 0 0 1 2.5 3.5c0 2.2-1.8 4-4 4-1.2 0-2.3-.5-3-1.4" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l1.5 1.5 3-3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-eyebrow">Flock &amp; Yield Operations</span>
+          <h1 class="brand-title">Poultry Management System</h1>
+        </div>
+      </div>
+      
+      <div class="header-badges">
+        <span class="system-status-pill" id="systemStatusPill">
+          <span class="status-dot"></span>
+          <span id="systemStatusText">System Online</span>
+        </span>
+      </div>
+    </div>
   </header>
 
-  <main class="container">
+  <main class="main-layout" id="mainLayout">
 
-    <!-- Global status banner for API errors / success messages -->
+    <!-- Global Alert / Notification Banner -->
     <div id="statusBanner" class="status-banner" role="alert" hidden></div>
 
-    <!-- House selector -->
-    <section class="card">
-      <h2>Poultry House</h2>
-      <label for="houseSelect">Select House</label>
-      <select id="houseSelect">
-        <option value="">-- No houses yet --</option>
-      </select>
+    <!-- Top Ribbon: House Selector & Quick Switcher -->
+    <section class="card house-selector-card" id="houseSelectorSection">
+      <div class="card-header">
+        <div class="header-icon-title">
+          <span class="section-badge">House Management</span>
+          <h2 class="card-title">Active Poultry House</h2>
+        </div>
+        <span class="card-caption">Select an operational flock house to inspect metrics and log daily data</span>
+      </div>
+
+      <div class="selector-row">
+        <div class="form-group flex-grow">
+          <label for="houseSelect" class="form-label">Selected House</label>
+          <div class="select-wrapper">
+            <select id="houseSelect" class="form-control select-custom">
+              <option value="">-- No houses yet --</option>
+            </select>
+          </div>
+        </div>
+        <div class="selector-action">
+          <a href="#houseForm" class="btn btn-secondary btn-sm" id="jumpToCreateBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New House</span>
+          </a>
+        </div>
+      </div>
     </section>
 
-    <!-- Dashboard -->
-    <section class="card">
-      <h2>Dashboard</h2>
+    <!-- Executive KPI Dashboard -->
+    <section class="card dashboard-card" id="dashboardSection">
+      <div class="card-header">
+        <div class="header-icon-title">
+          <span class="section-badge">Flock Analytics</span>
+          <h2 class="card-title" id="dashboardTitle">House Performance Overview</h2>
+        </div>
+        <span class="card-caption" id="dashboardSubtitle">Real-time vital stats &amp; cumulative consumption</span>
+      </div>
+
       <div id="dashboardEmpty" class="empty-state">
-        Select a poultry house to see its statistics.
+        <div class="empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"></rect>
+            <path d="M8 12h8M12 8v8"></path>
+          </svg>
+        </div>
+        <p>Select a poultry house above to review flock mortality, feed ratios, and egg yield.</p>
       </div>
-      <div id="dashboardStats" class="stats-grid" hidden>
-        <div class="stat-box">
-          <span class="stat-label">Current Birds</span>
-          <span class="stat-value" id="statCurrentBirds">–</span>
+
+      <div id="dashboardStats" class="kpi-grid" hidden>
+        <!-- Metric 1: Current Birds -->
+        <div class="kpi-card" id="kpiBirdsCard">
+          <div class="kpi-header">
+            <span class="kpi-label">Current Living Flock</span>
+            <span class="kpi-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.9-1.8 3.8L16 19H8l.8-8.2A5 5 0 0 1 12 2z"></path>
+                <path d="M6 19h12v3H6z"></path>
+              </svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="statCurrentBirds">–</span>
+            <span class="kpi-unit">birds</span>
+          </div>
+          <div class="kpi-subtext" id="statInitialPlaced">Active population</div>
         </div>
-        <div class="stat-box">
-          <span class="stat-label">Total Mortality</span>
-          <span class="stat-value" id="statMortality">–</span>
+
+        <!-- Metric 2: Mortality -->
+        <div class="kpi-card danger-accent" id="kpiMortalityCard">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Mortality</span>
+            <span class="kpi-icon danger" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="statMortality">–</span>
+            <span class="kpi-unit">losses</span>
+          </div>
+          <div class="kpi-subtext" id="statMortalityRate">Flock loss count</div>
         </div>
-        <div class="stat-box">
-          <span class="stat-label">Total Feed Used (kg)</span>
-          <span class="stat-value" id="statFeed">–</span>
+
+        <!-- Metric 3: Feed Used -->
+        <div class="kpi-card" id="kpiFeedCard">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Feed Consumed</span>
+            <span class="kpi-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="statFeed">–</span>
+            <span class="kpi-unit">kg</span>
+          </div>
+          <div class="kpi-subtext">Cumulative intake</div>
         </div>
-        <div class="stat-box">
-          <span class="stat-label">Total Eggs Collected</span>
-          <span class="stat-value" id="statEggs">–</span>
+
+        <!-- Metric 4: Total Eggs -->
+        <div class="kpi-card gold-accent" id="kpiEggsCard">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Eggs Collected</span>
+            <span class="kpi-icon gold" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22C7 22 4 17.5 4 13 4 8 7.5 2 12 2s8 6 8 11c0 4.5-3 9-8 9z"></path>
+              </svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="statEggs">–</span>
+            <span class="kpi-unit">units</span>
+          </div>
+          <div class="kpi-subtext">Cumulative production</div>
         </div>
       </div>
     </section>
 
-    <!-- Create House -->
-    <section class="card">
-      <h2>Create Poultry House</h2>
-      <form id="houseForm" novalidate>
-        <div class="form-group">
-          <label for="houseName">House Name</label>
-          <input type="text" id="houseName" name="houseName" required />
-          <span class="field-error" id="houseNameError"></span>
+    <!-- Two Columns Form Section: Record Daily Entry & Create House -->
+    <div class="forms-grid">
+
+      <!-- Form 1: Record Daily Information -->
+      <section class="card form-card primary-form" id="recordSection">
+        <div class="card-header">
+          <div class="header-icon-title">
+            <span class="section-badge badge-primary">Daily Entry</span>
+            <h2 class="card-title">Record Daily Information</h2>
+          </div>
+          <span class="card-caption">Log today's mortality, feed weight, and collection numbers</span>
         </div>
 
-        <div class="form-group">
-          <label for="birdsPlaced">Birds Placed</label>
-          <input type="number" id="birdsPlaced" name="birdsPlaced" min="1" step="1" required />
-          <span class="field-error" id="birdsPlacedError"></span>
+        <form id="dailyRecordForm" class="form-layout" novalidate>
+          <div class="form-group">
+            <label for="recordDate" class="form-label">
+              <span>Date</span>
+              <span class="required-indicator" title="Required">*</span>
+            </label>
+            <input type="date" id="recordDate" name="recordDate" class="form-control" required />
+            <span class="field-error" id="recordDateError"></span>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="mortality" class="form-label">
+                <span>Mortality</span>
+                <span class="required-indicator" title="Required">*</span>
+              </label>
+              <div class="input-with-affix">
+                <input type="number" id="mortality" name="mortality" min="0" step="1" placeholder="0" class="form-control" required />
+                <span class="affix-tag">birds</span>
+              </div>
+              <span class="field-error" id="mortalityError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="feedUsed" class="form-label">
+                <span>Feed Used</span>
+                <span class="required-indicator" title="Required">*</span>
+              </label>
+              <div class="input-with-affix">
+                <input type="number" id="feedUsed" name="feedUsed" min="0" step="0.01" placeholder="0.00" class="form-control" required />
+                <span class="affix-tag">kg</span>
+              </div>
+              <span class="field-error" id="feedUsedError"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="eggsCollected" class="form-label">
+              <span>Eggs Collected</span>
+              <span class="required-indicator" title="Required">*</span>
+            </label>
+            <div class="input-with-affix">
+              <input type="number" id="eggsCollected" name="eggsCollected" min="0" step="1" placeholder="0" class="form-control" required />
+              <span class="affix-tag">units</span>
+            </div>
+            <span class="field-error" id="eggsCollectedError"></span>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary btn-block" id="saveRecordBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save Daily Record</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Form 2: Create Poultry House -->
+      <section class="card form-card secondary-form" id="createHouseSection">
+        <div class="card-header">
+          <div class="header-icon-title">
+            <span class="section-badge">New Flock</span>
+            <h2 class="card-title">Create Poultry House</h2>
+          </div>
+          <span class="card-caption">Register a new house structure and initial stocking density</span>
         </div>
 
-        <div class="form-group">
-          <label for="dateCreated">Date Created</label>
-          <input type="date" id="dateCreated" name="dateCreated" required />
-          <span class="field-error" id="dateCreatedError"></span>
+        <form id="houseForm" class="form-layout" novalidate>
+          <div class="form-group">
+            <label for="houseName" class="form-label">
+              <span>House Name / Identifier</span>
+              <span class="required-indicator" title="Required">*</span>
+            </label>
+            <input type="text" id="houseName" name="houseName" placeholder="e.g. House 02 - North Barn" class="form-control" required />
+            <span class="field-error" id="houseNameError"></span>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="birdsPlaced" class="form-label">
+                <span>Birds Placed</span>
+                <span class="required-indicator" title="Required">*</span>
+              </label>
+              <div class="input-with-affix">
+                <input type="number" id="birdsPlaced" name="birdsPlaced" min="1" step="1" placeholder="500" class="form-control" required />
+                <span class="affix-tag">flock</span>
+              </div>
+              <span class="field-error" id="birdsPlacedError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="dateCreated" class="form-label">
+                <span>Date Created</span>
+                <span class="required-indicator" title="Required">*</span>
+              </label>
+              <input type="date" id="dateCreated" name="dateCreated" class="form-control" required />
+              <span class="field-error" id="dateCreatedError"></span>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn btn-secondary btn-block" id="createHouseBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Create House</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- Historical Daily Records Table -->
+    <section class="card table-card" id="historySection">
+      <div class="card-header table-card-header">
+        <div>
+          <div class="header-icon-title">
+            <span class="section-badge">Audit Log</span>
+            <h2 class="card-title">Daily Records Log</h2>
+          </div>
+          <span class="card-caption">Complete chronological entries logged for the active poultry house</span>
         </div>
+        <div class="table-badge" id="recordCountBadge">0 records</div>
+      </div>
 
-        <button type="submit" class="btn btn-primary">Create House</button>
-      </form>
-    </section>
-
-    <!-- Record Daily Information -->
-    <section class="card">
-      <h2>Record Daily Information</h2>
-      <form id="dailyRecordForm" novalidate>
-        <div class="form-group">
-          <label for="recordDate">Date</label>
-          <input type="date" id="recordDate" name="recordDate" required />
-          <span class="field-error" id="recordDateError"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="mortality">Mortality</label>
-          <input type="number" id="mortality" name="mortality" min="0" step="1" required />
-          <span class="field-error" id="mortalityError"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="feedUsed">Feed Used (kg)</label>
-          <input type="number" id="feedUsed" name="feedUsed" min="0" step="0.01" required />
-          <span class="field-error" id="feedUsedError"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="eggsCollected">Eggs Collected</label>
-          <input type="number" id="eggsCollected" name="eggsCollected" min="0" step="1" required />
-          <span class="field-error" id="eggsCollectedError"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Save Daily Record</button>
-      </form>
-    </section>
-
-    <!-- Daily Records Table -->
-    <section class="card">
-      <h2>Daily Records</h2>
       <div id="recordsEmpty" class="empty-state">
-        No daily records yet for this house.
+        <div class="empty-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <p>No daily records yet for this poultry house. Submit an entry above to start tracking.</p>
       </div>
-      <div class="table-wrapper">
-        <table id="recordsTable" hidden>
+
+      <div class="table-container" id="recordsTableContainer">
+        <table id="recordsTable" class="refined-table" hidden>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Mortality</th>
-              <th>Feed Used (kg)</th>
-              <th>Eggs Collected</th>
+              <th scope="col">Date</th>
+              <th scope="col" class="num-col">Mortality (Birds)</th>
+              <th scope="col" class="num-col">Feed Used (kg)</th>
+              <th scope="col" class="num-col">Eggs Collected</th>
+              <th scope="col" class="status-col">Health Indicator</th>
             </tr>
           </thead>
           <tbody id="recordsTableBody"></tbody>
@@ -131,6 +345,12 @@
     </section>
 
   </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p class="footer-text">&copy; Poultry Management System &bull; Clean Architecture &bull; PostgreSQL &amp; REST API</p>
+    </div>
+  </footer>
 
   <script src="js/app.js"></script>
 </body>

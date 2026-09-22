@@ -22,6 +22,8 @@ const statCurrentBirds = document.getElementById("statCurrentBirds");
 const statMortality = document.getElementById("statMortality");
 const statFeed = document.getElementById("statFeed");
 const statEggs = document.getElementById("statEggs");
+const statInitialPlaced = document.getElementById("statInitialPlaced");
+const statMortalityRate = document.getElementById("statMortalityRate");
 
 const houseForm = document.getElementById("houseForm");
 const dailyRecordForm = document.getElementById("dailyRecordForm");
@@ -29,6 +31,7 @@ const dailyRecordForm = document.getElementById("dailyRecordForm");
 const recordsEmpty = document.getElementById("recordsEmpty");
 const recordsTable = document.getElementById("recordsTable");
 const recordsTableBody = document.getElementById("recordsTableBody");
+const recordCountBadge = document.getElementById("recordCountBadge");
 
 // ---------- Status banner helpers ----------
 
@@ -402,10 +405,21 @@ async function loadDashboard(houseId) {
     const data = await apiRequest(`/houses/${houseId}/dashboard`);
     dashboardEmpty.hidden = true;
     dashboardStats.hidden = false;
-    statCurrentBirds.textContent = data.currentBirds;
-    statMortality.textContent = data.totalMortality;
-    statFeed.textContent = Number(data.totalFeedUsedKg).toFixed(2);
-    statEggs.textContent = data.totalEggsCollected;
+    statCurrentBirds.textContent = Number(data.currentBirds).toLocaleString();
+    statMortality.textContent = Number(data.totalMortality).toLocaleString();
+    statFeed.textContent = Number(data.totalFeedUsedKg).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    statEggs.textContent = Number(data.totalEggsCollected).toLocaleString();
+
+    if (statInitialPlaced) {
+      statInitialPlaced.textContent = `Original stock: ${Number(data.birdsPlaced).toLocaleString()} placed`;
+    }
+    if (statMortalityRate && data.birdsPlaced > 0) {
+      const pct = ((data.totalMortality / data.birdsPlaced) * 100).toFixed(1);
+      statMortalityRate.textContent = `${pct}% cumulative loss`;
+    }
   } catch (err) {
     showError(err.message);
   }
@@ -417,6 +431,9 @@ function renderEmptyRecords() {
   recordsEmpty.hidden = false;
   recordsTable.hidden = true;
   recordsTableBody.innerHTML = "";
+  if (recordCountBadge) {
+    recordCountBadge.textContent = "0 records";
+  }
 }
 
 async function loadDailyRecords(houseId) {
@@ -437,23 +454,49 @@ function renderRecordsTable(records) {
   recordsEmpty.hidden = true;
   recordsTable.hidden = false;
   recordsTableBody.innerHTML = "";
+  if (recordCountBadge) {
+    recordCountBadge.textContent = `${records.length} ${records.length === 1 ? "record" : "records"}`;
+  }
 
   records.forEach((record) => {
     const row = document.createElement("tr");
 
     const dateCell = document.createElement("td");
-    dateCell.textContent = new Date(record.date).toLocaleDateString();
+    const d = new Date(record.date);
+    dateCell.textContent = d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
 
     const mortalityCell = document.createElement("td");
-    mortalityCell.textContent = record.mortality;
+    mortalityCell.className = "num-col";
+    mortalityCell.textContent = Number(record.mortality).toLocaleString();
 
     const feedCell = document.createElement("td");
-    feedCell.textContent = Number(record.feedUsedKg).toFixed(2);
+    feedCell.className = "num-col";
+    feedCell.textContent = Number(record.feedUsedKg).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
     const eggsCell = document.createElement("td");
-    eggsCell.textContent = record.eggsCollected;
+    eggsCell.className = "num-col";
+    eggsCell.textContent = Number(record.eggsCollected).toLocaleString();
 
-    row.append(dateCell, mortalityCell, feedCell, eggsCell);
+    const statusCell = document.createElement("td");
+    statusCell.className = "status-col";
+    const pill = document.createElement("span");
+    if (record.mortality === 0) {
+      pill.className = "loss-pill clean";
+      pill.textContent = "Optimal (0 loss)";
+    } else {
+      pill.className = "loss-pill elevated";
+      pill.textContent = `-${record.mortality} birds`;
+    }
+    statusCell.appendChild(pill);
+
+    row.append(dateCell, mortalityCell, feedCell, eggsCell, statusCell);
     recordsTableBody.appendChild(row);
   });
 }
@@ -534,5 +577,16 @@ function remapRecordFieldErrors(errors) {
 }
 
 // ---------- Init ----------
+
+// Pre-fill today's date for daily record date and house creation date
+const todayStr = new Date().toISOString().split("T")[0];
+const recordDateInput = document.getElementById("recordDate");
+const dateCreatedInput = document.getElementById("dateCreated");
+if (recordDateInput && !recordDateInput.value) {
+  recordDateInput.value = todayStr;
+}
+if (dateCreatedInput && !dateCreatedInput.value) {
+  dateCreatedInput.value = todayStr;
+}
 
 loadHouses();
