@@ -3,355 +3,1238 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Poultry Management System</title>
-  <meta name="description" content="A refined poultry flock management system to track houses, daily records, mortality, feed usage, and egg collection with precision." />
+  <title>Poultry Management System — Farm Operations Suite</title>
+  <meta name="description" content="A comprehensive poultry management platform for tracking houses, daily production records, mortality, feed efficiency, egg collection, and cycle analytics." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2.1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 </head>
-<body>
+<body class="app-body">
 
-  <!-- Elegant App Header -->
-  <header class="app-header" id="appHeader">
-    <div class="header-container">
-      <div class="brand-group">
-        <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9Z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7c1.5 0 2.8 1.1 3 2.5a3.5 3.5 0 0 1 2.5 3.5c0 2.2-1.8 4-4 4-1.2 0-2.3-.5-3-1.4" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l1.5 1.5 3-3" />
-          </svg>
-        </div>
-        <div class="brand-text">
-          <span class="brand-eyebrow">Flock &amp; Yield Operations</span>
-          <h1 class="brand-title">Poultry Management System</h1>
-        </div>
-      </div>
-      
-      <div class="header-badges">
-        <span class="system-status-pill" id="systemStatusPill">
-          <span class="status-dot"></span>
-          <span id="systemStatusText">System Online</span>
-        </span>
-      </div>
-    </div>
-  </header>
+  <!-- Mobile Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-  <main class="main-layout" id="mainLayout">
+  <!-- App Wrapper: Sidebar + Main Content -->
+  <div class="app-layout-wrapper">
 
-    <!-- Global Alert / Notification Banner -->
-    <div id="statusBanner" class="status-banner" role="alert" hidden></div>
-
-    <!-- Top Ribbon: House Selector & Quick Switcher -->
-    <section class="card house-selector-card" id="houseSelectorSection">
-      <div class="card-header">
-        <div class="header-icon-title">
-          <span class="section-badge">House Management</span>
-          <h2 class="card-title">Active Poultry House</h2>
-        </div>
-        <span class="card-caption">Select an operational flock house to inspect metrics and log daily data</span>
-      </div>
-
-      <div class="selector-row">
-        <div class="form-group flex-grow">
-          <label for="houseSelect" class="form-label">Selected House</label>
-          <div class="select-wrapper">
-            <select id="houseSelect" class="form-control select-custom">
-              <option value="">-- No houses yet --</option>
-            </select>
+    <!-- Sidebar Navigation (Desktop Modern Sticky Sidebar & Mobile Drawer) -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <div class="brand-group">
+          <div class="brand-logo-wrap">
+            <img src="images/agri-farms-logo.svg" alt="Agri Farms21 Logo" class="brand-logo-img" />
           </div>
         </div>
-        <div class="selector-action">
-          <a href="#houseForm" class="btn btn-secondary btn-sm" id="jumpToCreateBtn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button type="button" class="btn-icon-close-sidebar" id="closeSidebarBtn" aria-label="Close navigation menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Quick Flock Switcher inside Sidebar -->
+      <div class="sidebar-house-switcher">
+        <label for="sidebarHouseSelect" class="sidebar-section-title">Active Flock House</label>
+        <div class="select-wrapper">
+          <select id="sidebarHouseSelect" class="form-control select-custom sidebar-select">
+            <option value="">-- No houses yet --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Primary Navigation Links -->
+      <nav class="sidebar-nav">
+        <div class="nav-category">
+          <span class="nav-category-title">Core Operations</span>
+          <ul class="nav-menu">
+            <li>
+              <a href="#dashboardSection" class="nav-link active" data-nav="dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+                  <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+                  <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+                  <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+                </svg>
+                <span>Dashboard &amp; KPIs</span>
+              </a>
+            </li>
+            <li>
+              <a href="#recordSection" class="nav-link" data-nav="record">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                <span>Record Daily Log</span>
+              </a>
+            </li>
+            <li>
+              <a href="#historySection" class="nav-link" data-nav="history">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Historical Audit Log</span>
+              </a>
+            </li>
+            <li>
+              <a href="#batchSection" class="nav-link" data-nav="batches">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                  <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                  <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+                <span>Batch &amp; Breed Cycles</span>
+                <span class="badge-live-tag">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#inventorySection" class="nav-link" data-nav="inventory">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                </svg>
+                <span>Feed Silos &amp; FCR</span>
+                <span class="badge-live-tag">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#healthSection" class="nav-link" data-nav="health">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                <span>Vaccines &amp; Biosecurity</span>
+                <span class="badge-live-tag">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#salesSection" class="nav-link" data-nav="sales">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span>Commercial Sales &amp; P&amp;L</span>
+                <span class="badge-live-tag">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#createHouseSection" class="nav-link" data-nav="house">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Add Poultry House</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-category">
+          <div class="nav-category-header">
+            <span class="nav-category-title">System Architecture</span>
+            <span class="roadmap-badge">Phase 2 &amp; 3</span>
+          </div>
+          <div class="sidebar-status-card">
+            <div class="status-indicator-dot online"></div>
+            <div class="status-info">
+              <span class="status-title">Enterprise System Online</span>
+              <span class="status-sub">All Phase 2 &amp; 3 modules active</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer User / Farm Info -->
+      <div class="sidebar-footer">
+        <div class="farm-profile">
+          <img src="favicon.svg" alt="Agri Farms21 Seal" class="farm-avatar-img" />
+          <div class="farm-details">
+            <span class="farm-name">Agri_farms21</span>
+            <span class="farm-role">Commercial Broilers &amp; Layers</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content-wrapper">
+
+      <!-- Top Header / App Bar (Modern with Hamburger Menu) -->
+      <header class="top-app-bar" id="topAppBar">
+        <div class="app-bar-left">
+          <!-- Mobile Hamburger Toggle Button -->
+          <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Open mobile navigation menu" aria-expanded="false" aria-controls="appSidebar">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+          </button>
+          
+          <!-- Mobile Brand Seal Icon -->
+          <div class="top-brand-icon d-mobile-only">
+            <img src="favicon.svg" alt="Agri Farms21 Logo" width="32" height="32" />
+          </div>
+
+          <div class="top-title-group">
+            <span class="top-eyebrow">Agri_farms21 Operations</span>
+            <h1 class="top-heading">Flock &amp; Yield Management</h1>
+          </div>
+        </div>
+
+        <div class="app-bar-right">
+          <!-- Quick Status Indicator -->
+          <div class="system-status-pill" id="systemStatusPill" title="REST API &amp; Database Status">
+            <span class="status-dot"></span>
+            <span id="systemStatusText">System Online</span>
+          </div>
+
+          <!-- Quick Action: New House Modal / Jump Button -->
+          <a href="#createHouseSection" class="btn btn-secondary btn-sm d-none-mobile">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            <span>New House</span>
+            <span>Add House</span>
           </a>
         </div>
-      </div>
-    </section>
+      </header>
 
-    <!-- Executive KPI Dashboard -->
-    <section class="card dashboard-card" id="dashboardSection">
-      <div class="card-header">
-        <div class="header-icon-title">
-          <span class="section-badge">Flock Analytics</span>
-          <h2 class="card-title" id="dashboardTitle">House Performance Overview</h2>
-        </div>
-        <span class="card-caption" id="dashboardSubtitle">Real-time vital stats &amp; cumulative consumption</span>
-      </div>
+      <!-- Main Layout Body -->
+      <main class="main-scrollable-content" id="mainLayout">
 
-      <div id="dashboardEmpty" class="empty-state">
-        <div class="empty-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"></rect>
-            <path d="M8 12h8M12 8v8"></path>
-          </svg>
-        </div>
-        <p>Select a poultry house above to review flock mortality, feed ratios, and egg yield.</p>
-      </div>
+        <!-- Global Alert / Notification Banner -->
+        <div id="statusBanner" class="status-banner" role="alert" hidden></div>
 
-      <div id="dashboardStats" class="kpi-grid" hidden>
-        <!-- Metric 1: Current Birds -->
-        <div class="kpi-card" id="kpiBirdsCard">
-          <div class="kpi-header">
-            <span class="kpi-label">Current Living Flock</span>
-            <span class="kpi-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.9-1.8 3.8L16 19H8l.8-8.2A5 5 0 0 1 12 2z"></path>
-                <path d="M6 19h12v3H6z"></path>
+        <!-- Top Ribbon: House Selector & Quick Switcher -->
+        <section class="card house-selector-card" id="houseSelectorSection">
+          <div class="card-header">
+            <div class="header-icon-title">
+              <span class="section-badge">House Management</span>
+              <h2 class="card-title">Active Poultry House</h2>
+            </div>
+            <span class="card-caption">Select an operational flock house to inspect metrics and log daily data</span>
+          </div>
+
+          <div class="selector-row">
+            <div class="form-group flex-grow">
+              <label for="houseSelect" class="form-label">Selected House</label>
+              <div class="select-wrapper">
+                <select id="houseSelect" class="form-control select-custom">
+                  <option value="">-- No houses yet --</option>
+                </select>
+              </div>
+            </div>
+            <div class="selector-action">
+              <a href="#createHouseSection" class="btn btn-secondary btn-sm" id="jumpToCreateBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>New House</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Executive KPI Dashboard -->
+        <section class="card dashboard-card" id="dashboardSection">
+          <div class="card-header dashboard-header-flex">
+            <div class="header-icon-title">
+              <span class="section-badge">Flock Analytics</span>
+              <h2 class="card-title" id="dashboardTitle">House Performance Overview</h2>
+            </div>
+            <div class="dashboard-tags">
+              <span class="card-caption" id="dashboardSubtitle">Real-time vital stats &amp; cumulative consumption</span>
+            </div>
+          </div>
+
+          <div id="dashboardEmpty" class="empty-state">
+            <div class="empty-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"></rect>
+                <path d="M8 12h8M12 8v8"></path>
               </svg>
-            </span>
+            </div>
+            <p>Select a poultry house above to review flock mortality, feed ratios, and egg yield.</p>
           </div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="statCurrentBirds">–</span>
-            <span class="kpi-unit">birds</span>
+
+          <div id="dashboardStats" class="kpi-grid" hidden>
+            <!-- Metric 1: Current Birds -->
+            <div class="kpi-card" id="kpiBirdsCard">
+              <div class="kpi-header">
+                <span class="kpi-label">Current Living Flock</span>
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.9-1.8 3.8L16 19H8l.8-8.2A5 5 0 0 1 12 2z"></path>
+                    <path d="M6 19h12v3H6z"></path>
+                  </svg>
+                </span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="statCurrentBirds">–</span>
+                <span class="kpi-unit">birds</span>
+              </div>
+              <div class="kpi-subtext" id="statInitialPlaced">Active population</div>
+            </div>
+
+            <!-- Metric 2: Mortality -->
+            <div class="kpi-card danger-accent" id="kpiMortalityCard">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Mortality</span>
+                <span class="kpi-icon danger" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="statMortality">–</span>
+                <span class="kpi-unit">losses</span>
+              </div>
+              <div class="kpi-subtext" id="statMortalityRate">Flock loss count</div>
+            </div>
+
+            <!-- Metric 3: Feed Used -->
+            <div class="kpi-card" id="kpiFeedCard">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Feed Consumed</span>
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                </span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="statFeed">–</span>
+                <span class="kpi-unit">kg</span>
+              </div>
+              <div class="kpi-subtext">Cumulative intake</div>
+            </div>
+
+            <!-- Metric 4: Total Eggs -->
+            <div class="kpi-card gold-accent" id="kpiEggsCard">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Eggs Collected</span>
+                <span class="kpi-icon gold" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22C7 22 4 17.5 4 13 4 8 7.5 2 12 2s8 6 8 11c0 4.5-3 9-8 9z"></path>
+                  </svg>
+                </span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="statEggs">–</span>
+                <span class="kpi-unit">units</span>
+              </div>
+              <div class="kpi-subtext">Cumulative production</div>
+            </div>
           </div>
-          <div class="kpi-subtext" id="statInitialPlaced">Active population</div>
+        </section>
+
+        <!-- Two Columns Form Section: Record Daily Entry & Create House -->
+        <div class="forms-grid">
+
+          <!-- Form 1: Record Daily Information -->
+          <section class="card form-card primary-form" id="recordSection">
+            <div class="card-header">
+              <div class="header-icon-title">
+                <span class="section-badge badge-primary">Daily Entry</span>
+                <h2 class="card-title">Record Daily Information</h2>
+              </div>
+              <span class="card-caption">Log mortality, feed weight, and egg collection for the active house</span>
+            </div>
+
+            <form id="dailyRecordForm" class="form-layout" novalidate>
+              <div class="form-group">
+                <label for="recordDate" class="form-label">
+                  <span>Date</span>
+                  <span class="required-indicator" title="Required">*</span>
+                </label>
+                <input type="date" id="recordDate" name="recordDate" class="form-control" required />
+                <span class="field-error" id="recordDateError"></span>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="mortality" class="form-label">
+                    <span>Mortality</span>
+                    <span class="required-indicator" title="Required">*</span>
+                  </label>
+                  <div class="input-with-affix">
+                    <input type="number" id="mortality" name="mortality" min="0" step="1" placeholder="0" class="form-control" required />
+                    <span class="affix-tag">birds</span>
+                  </div>
+                  <span class="field-error" id="mortalityError"></span>
+                </div>
+
+                <div class="form-group">
+                  <label for="feedUsed" class="form-label">
+                    <span>Feed Used</span>
+                    <span class="required-indicator" title="Required">*</span>
+                  </label>
+                  <div class="input-with-affix">
+                    <input type="number" id="feedUsed" name="feedUsed" min="0" step="0.01" placeholder="0.00" class="form-control" required />
+                    <span class="affix-tag">kg</span>
+                  </div>
+                  <span class="field-error" id="feedUsedError"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="eggsCollected" class="form-label">
+                  <span>Eggs Collected</span>
+                  <span class="required-indicator" title="Required">*</span>
+                </label>
+                <div class="input-with-affix">
+                  <input type="number" id="eggsCollected" name="eggsCollected" min="0" step="1" placeholder="0" class="form-control" required />
+                  <span class="affix-tag">units</span>
+                </div>
+                <span class="field-error" id="eggsCollectedError"></span>
+              </div>
+
+              <div class="form-footer">
+                <button type="submit" class="btn btn-primary btn-block" id="saveRecordBtn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  <span>Save Daily Record</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Form 2: Create Poultry House -->
+          <section class="card form-card secondary-form" id="createHouseSection">
+            <div class="card-header">
+              <div class="header-icon-title">
+                <span class="section-badge">New Flock</span>
+                <h2 class="card-title">Create Poultry House</h2>
+              </div>
+              <span class="card-caption">Register a new house structure and initial stocking density</span>
+            </div>
+
+            <form id="houseForm" class="form-layout" novalidate>
+              <div class="form-group">
+                <label for="houseName" class="form-label">
+                  <span>House Name / Identifier</span>
+                  <span class="required-indicator" title="Required">*</span>
+                </label>
+                <input type="text" id="houseName" name="houseName" placeholder="e.g. House 02 - North Barn" class="form-control" required />
+                <span class="field-error" id="houseNameError"></span>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="birdsPlaced" class="form-label">
+                    <span>Birds Placed</span>
+                    <span class="required-indicator" title="Required">*</span>
+                  </label>
+                  <div class="input-with-affix">
+                    <input type="number" id="birdsPlaced" name="birdsPlaced" min="1" step="1" placeholder="500" class="form-control" required />
+                    <span class="affix-tag">flock</span>
+                  </div>
+                  <span class="field-error" id="birdsPlacedError"></span>
+                </div>
+
+                <div class="form-group">
+                  <label for="dateCreated" class="form-label">
+                    <span>Date Created</span>
+                    <span class="required-indicator" title="Required">*</span>
+                  </label>
+                  <input type="date" id="dateCreated" name="dateCreated" class="form-control" required />
+                  <span class="field-error" id="dateCreatedError"></span>
+                </div>
+              </div>
+
+              <div class="form-footer">
+                <button type="submit" class="btn btn-secondary btn-block" id="createHouseBtn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                  <span>Create House</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
         </div>
 
-        <!-- Metric 2: Mortality -->
-        <div class="kpi-card danger-accent" id="kpiMortalityCard">
-          <div class="kpi-header">
-            <span class="kpi-label">Total Mortality</span>
-            <span class="kpi-icon danger" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Historical Daily Records Table -->
+        <section class="card table-card" id="historySection">
+          <div class="card-header table-card-header">
+            <div>
+              <div class="header-icon-title">
+                <span class="section-badge">Audit Log</span>
+                <h2 class="card-title">Daily Records Log</h2>
+              </div>
+              <span class="card-caption">Complete chronological entries logged for the active poultry house</span>
+            </div>
+            <div class="table-badge" id="recordCountBadge">0 records</div>
+          </div>
+
+          <div id="recordsEmpty" class="empty-state">
+            <div class="empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <p>No daily records yet for this poultry house. Submit an entry above to start tracking.</p>
+          </div>
+
+          <div class="table-container" id="recordsTableContainer">
+            <table id="recordsTable" class="refined-table" hidden>
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col" class="num-col">Mortality (Birds)</th>
+                  <th scope="col" class="num-col">Feed Used (kg)</th>
+                  <th scope="col" class="num-col">Eggs Collected</th>
+                  <th scope="col" class="status-col">Health Status</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             OPERATIONAL MODULE 1: Batch & Breed Cycles (Phase 2 Live)
+             ========================================================================== -->
+        <section class="card module-section" id="batchSection">
+          <div class="card-header module-header-flex">
+            <div>
+              <div class="header-icon-title">
+                <span class="section-badge">Flock Management</span>
+                <h2 class="card-title">Batch &amp; Breed Cycles</h2>
+              </div>
+              <span class="card-caption">Manage broiler cohorts, layer production curves, bird age, and target slaughter weights</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="toggleNewBatchBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Place New Batch</span>
+            </button>
+          </div>
+
+          <!-- New Batch Placement Form (Collapsible) -->
+          <div id="newBatchFormContainer" class="form-collapsible" hidden>
+            <form id="createBatchForm" class="form-layout batch-form-box">
+              <h3 class="form-subheading">Register New Flock Cohort</h3>
+              
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label for="batchCode" class="form-label">
+                    <span>Batch Code / ID</span>
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <input type="text" id="batchCode" name="batchCode" placeholder="e.g. BATCH-2026-02" class="form-control" required />
+                </div>
+                <div class="form-group">
+                  <label for="batchHouseSelect" class="form-label">
+                    <span>Assigned House</span>
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <div class="select-wrapper">
+                    <select id="batchHouseSelect" class="form-control select-custom" required>
+                      <option value="">-- Select House --</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="breedType" class="form-label">
+                    <span>Breed Profile</span>
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <div class="select-wrapper">
+                    <select id="breedType" name="breedType" class="form-control select-custom" required>
+                      <option value="Cobb 500 (Commercial Broiler)">Cobb 500 (Commercial Broiler)</option>
+                      <option value="Ross 308 (Fast Growing Broiler)">Ross 308 (Fast Growing Broiler)</option>
+                      <option value="Isa Brown (Commercial Layer)">Isa Brown (Commercial Layer)</option>
+                      <option value="Lohmann Brown (Layer)">Lohmann Brown (Layer)</option>
+                      <option value="Sasso / Kuroiler (Dual Purpose)">Sasso / Kuroiler (Dual Purpose)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label for="flockSize" class="form-label">
+                    <span>Flock Placed</span>
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <div class="input-with-affix">
+                    <input type="number" id="flockSize" min="1" step="1" placeholder="500" class="form-control" required />
+                    <span class="affix-tag">chicks</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="placementDate" class="form-label">
+                    <span>Placement Date</span>
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <input type="date" id="placementDate" class="form-control" required />
+                </div>
+                <div class="form-group">
+                  <label for="targetWeightKg" class="form-label">
+                    <span>Target Weight</span>
+                  </label>
+                  <div class="input-with-affix">
+                    <input type="number" id="targetWeightKg" step="0.1" placeholder="2.4" class="form-control" />
+                    <span class="affix-tag">kg/bird</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions-row">
+                <button type="button" class="btn btn-secondary btn-sm" id="cancelBatchBtn">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm" id="saveBatchBtn">Save Flock Batch</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Active Batches Table -->
+          <div class="table-container">
+            <table class="refined-table" id="batchesTable">
+              <thead>
+                <tr>
+                  <th>Batch Code</th>
+                  <th>House</th>
+                  <th>Breed</th>
+                  <th class="num-col">Live / Placed</th>
+                  <th class="num-col">Age</th>
+                  <th class="num-col">Expected Wt</th>
+                  <th class="num-col">Mortality %</th>
+                  <th class="status-col">Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="batchesTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             OPERATIONAL MODULE 2: Feed & Silo Inventory & FCR (Phase 2 Live)
+             ========================================================================== -->
+        <section class="card module-section" id="inventorySection">
+          <div class="card-header module-header-flex">
+            <div>
+              <div class="header-icon-title">
+                <span class="section-badge">Inventory Operations &amp; Feed Efficiency</span>
+                <h2 class="card-title">Feed Silos &amp; Conversion Efficiency (FCR)</h2>
+              </div>
+              <span class="card-caption">Starter, grower &amp; finisher stock tracking, automated 3-day restock alerts, and live Feed Conversion Ratio</span>
+            </div>
+            <div class="module-actions-wrap">
+              <button type="button" class="btn btn-primary btn-sm" id="openStockModalBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="17 1 21 5 17 9"></polyline>
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                  <polyline points="7 23 3 19 7 15"></polyline>
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                </svg>
+                <span>Stock Movement / Refill</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Silo & FCR KPI Summary Ribbon -->
+          <div class="silo-metrics-row">
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Feed Conversion (FCR)</span>
+              <div class="mini-metric-val"><span id="fcrMetricVal">1.62</span> <small>kg feed / kg gain</small></div>
+              <span class="mini-metric-sub" id="fcrRating">Target: 1.55 &bull; Standard Efficiency</span>
+            </div>
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Total Feed on Hand</span>
+              <div class="mini-metric-val"><span id="invTotalBags">--</span> <small>bags (50kg)</small></div>
+              <span class="mini-metric-sub" id="invTotalKg">0 tons total weight</span>
+            </div>
+            <div class="silo-mini-metric" id="invAlertBox">
+              <span class="mini-metric-label">3-Day Restock Alerts</span>
+              <div class="mini-metric-val alert-text"><span id="invLowCount">0</span> <small>urgent silos</small></div>
+              <span class="mini-metric-sub" id="invAlertSub">Automated buffer threshold monitor</span>
+            </div>
+          </div>
+
+          <!-- Silo Visual Progress Cards Grid -->
+          <div class="silo-cards-grid" id="siloCardsGrid">
+            <!-- Dynamically rendered -->
+          </div>
+
+          <!-- Recent Stock Log -->
+          <div class="table-card-subblock">
+            <h4 class="subblock-title">Recent Feed Movement Log</h4>
+            <div class="table-container">
+              <table class="refined-table" id="movementsTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Silo / Warehouse</th>
+                    <th>Action</th>
+                    <th class="num-col">Quantity</th>
+                    <th>Supplier / Recipient</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="movementsTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             OPERATIONAL MODULE 3: Biosecurity, Vaccines & Medication (Phase 2 Live)
+             ========================================================================== -->
+        <section class="card module-section" id="healthSection">
+          <div class="card-header module-header-flex">
+            <div>
+              <div class="header-icon-title">
+                <span class="section-badge">Biosecurity &amp; Flock Health</span>
+                <h2 class="card-title">Vaccination &amp; Medication Schedule</h2>
+              </div>
+              <span class="card-caption">Gumboro, Newcastle &amp; Marek's schedules, mandatory antibiotic withdrawal countdowns, and symptoms triage</span>
+            </div>
+            <div class="module-actions-wrap">
+              <button type="button" class="btn btn-secondary btn-sm" id="openTriageModalBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <span>Symptom Triage</span>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" id="openHealthModalBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+                <span>Record Treatment / Vaccine</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Withdrawal Period Live Alert Banner -->
+          <div class="withdrawal-alert-card" id="withdrawalAlertBox">
+            <div class="withdrawal-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
-            </span>
-          </div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="statMortality">–</span>
-            <span class="kpi-unit">losses</span>
-          </div>
-          <div class="kpi-subtext" id="statMortalityRate">Flock loss count</div>
-        </div>
-
-        <!-- Metric 3: Feed Used -->
-        <div class="kpi-card" id="kpiFeedCard">
-          <div class="kpi-header">
-            <span class="kpi-label">Total Feed Consumed</span>
-            <span class="kpi-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-              </svg>
-            </span>
-          </div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="statFeed">–</span>
-            <span class="kpi-unit">kg</span>
-          </div>
-          <div class="kpi-subtext">Cumulative intake</div>
-        </div>
-
-        <!-- Metric 4: Total Eggs -->
-        <div class="kpi-card gold-accent" id="kpiEggsCard">
-          <div class="kpi-header">
-            <span class="kpi-label">Total Eggs Collected</span>
-            <span class="kpi-icon gold" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22C7 22 4 17.5 4 13 4 8 7.5 2 12 2s8 6 8 11c0 4.5-3 9-8 9z"></path>
-              </svg>
-            </span>
-          </div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="statEggs">–</span>
-            <span class="kpi-unit">units</span>
-          </div>
-          <div class="kpi-subtext">Cumulative production</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Two Columns Form Section: Record Daily Entry & Create House -->
-    <div class="forms-grid">
-
-      <!-- Form 1: Record Daily Information -->
-      <section class="card form-card primary-form" id="recordSection">
-        <div class="card-header">
-          <div class="header-icon-title">
-            <span class="section-badge badge-primary">Daily Entry</span>
-            <h2 class="card-title">Record Daily Information</h2>
-          </div>
-          <span class="card-caption">Log today's mortality, feed weight, and collection numbers</span>
-        </div>
-
-        <form id="dailyRecordForm" class="form-layout" novalidate>
-          <div class="form-group">
-            <label for="recordDate" class="form-label">
-              <span>Date</span>
-              <span class="required-indicator" title="Required">*</span>
-            </label>
-            <input type="date" id="recordDate" name="recordDate" class="form-control" required />
-            <span class="field-error" id="recordDateError"></span>
+            </div>
+            <div class="withdrawal-content">
+              <strong>Active Withdrawal Restrictions (<span id="activeWithdrawalsCount">1</span> active)</strong>
+              <p>Antibiotic or chemical residue countdown in effect. Meat or table egg harvesting from treated batches is strictly prohibited until clearance date.</p>
+            </div>
           </div>
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="mortality" class="form-label">
-                <span>Mortality</span>
-                <span class="required-indicator" title="Required">*</span>
-              </label>
-              <div class="input-with-affix">
-                <input type="number" id="mortality" name="mortality" min="0" step="1" placeholder="0" class="form-control" required />
-                <span class="affix-tag">birds</span>
+          <!-- Standard Veterinary Vaccination Protocols Table -->
+          <div class="table-card-subblock">
+            <h4 class="subblock-title">Standard Commercial Vaccination Calendar</h4>
+            <div class="table-container">
+              <table class="refined-table" id="protocolsTable">
+                <thead>
+                  <tr>
+                    <th>Disease &amp; Pathogen</th>
+                    <th>Target Timing</th>
+                    <th>Route / Method</th>
+                    <th>Booster Schedule</th>
+                    <th>Withdrawal</th>
+                    <th class="status-col">Importance</th>
+                  </tr>
+                </thead>
+                <tbody id="protocolsTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Active Administrations & Triage Log Grid -->
+          <div class="table-card-subblock">
+            <h4 class="subblock-title">Recent Treatments &amp; Withdrawal Countdowns</h4>
+            <div class="table-container">
+              <table class="refined-table" id="administrationsTable">
+                <thead>
+                  <tr>
+                    <th>Date Administered</th>
+                    <th>Batch / House</th>
+                    <th>Type</th>
+                    <th>Medication / Vaccine</th>
+                    <th>Dosage &amp; Route</th>
+                    <th>Withdrawal Status</th>
+                    <th>Administered By</th>
+                  </tr>
+                </thead>
+                <tbody id="administrationsTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             OPERATIONAL MODULE 4: Enterprise P&L & Commercial Sales (Phase 3 Live)
+             ========================================================================== -->
+        <section class="card module-section" id="salesSection">
+          <div class="card-header module-header-flex">
+            <div>
+              <div class="header-icon-title">
+                <span class="section-badge">Enterprise P&amp;L &amp; Commercial Sales</span>
+                <h2 class="card-title">Commercial Sales, Revenue &amp; Net Margins</h2>
               </div>
-              <span class="field-error" id="mortalityError"></span>
+              <span class="card-caption">Wholesale egg crate invoices, direct live broiler weight transactions, and unit gross margin analytics</span>
             </div>
-
-            <div class="form-group">
-              <label for="feedUsed" class="form-label">
-                <span>Feed Used</span>
-                <span class="required-indicator" title="Required">*</span>
-              </label>
-              <div class="input-with-affix">
-                <input type="number" id="feedUsed" name="feedUsed" min="0" step="0.01" placeholder="0.00" class="form-control" required />
-                <span class="affix-tag">kg</span>
-              </div>
-              <span class="field-error" id="feedUsedError"></span>
+            <div class="module-actions-wrap">
+              <button type="button" class="btn btn-primary btn-sm" id="openInvoiceModalBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Create Sales Invoice</span>
+              </button>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="eggsCollected" class="form-label">
-              <span>Eggs Collected</span>
-              <span class="required-indicator" title="Required">*</span>
-            </label>
-            <div class="input-with-affix">
-              <input type="number" id="eggsCollected" name="eggsCollected" min="0" step="1" placeholder="0" class="form-control" required />
-              <span class="affix-tag">units</span>
+          <!-- Financial Performance Summary Ribbon -->
+          <div class="financial-metrics-row">
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Total Commercial Revenue</span>
+              <div class="mini-metric-val">$<span id="finRevenue">0.00</span></div>
+              <span class="mini-metric-sub">Egg crates &amp; broiler live weight</span>
             </div>
-            <span class="field-error" id="eggsCollectedError"></span>
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Net Operating Profit</span>
+              <div class="mini-metric-val" style="color:#059669;">$<span id="finNetProfit">0.00</span></div>
+              <span class="mini-metric-sub">Gross Margin: <strong id="finMarginPercent">0.0%</strong></span>
+            </div>
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Egg Unit Net Margin</span>
+              <div class="mini-metric-val" style="font-size:1.35rem;" id="finProfitPerCrate">$2.20 / crate</div>
+              <span class="mini-metric-sub">Avg 30-egg crate net return</span>
+            </div>
+            <div class="silo-mini-metric">
+              <span class="mini-metric-label">Broiler Live Unit Margin</span>
+              <div class="mini-metric-val" style="font-size:1.35rem;" id="finProfitPerKg">$1.09 / kg</div>
+              <span class="mini-metric-sub">Net profit per live kg sold</span>
+            </div>
           </div>
 
-          <div class="form-footer">
-            <button type="submit" class="btn btn-primary btn-block" id="saveRecordBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              <span>Save Daily Record</span>
-            </button>
+          <!-- Commercial Sales Invoices Table -->
+          <div class="table-container">
+            <table class="refined-table" id="salesTable">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Commodity Category</th>
+                  <th class="num-col">Volume Sold</th>
+                  <th class="num-col">Unit Price</th>
+                  <th class="num-col">Revenue</th>
+                  <th class="num-col">Net Profit</th>
+                  <th class="status-col">Payment</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
           </div>
-        </form>
-      </section>
+        </section>
 
-      <!-- Form 2: Create Poultry House -->
-      <section class="card form-card secondary-form" id="createHouseSection">
-        <div class="card-header">
-          <div class="header-icon-title">
-            <span class="section-badge">New Flock</span>
-            <h2 class="card-title">Create Poultry House</h2>
-          </div>
-          <span class="card-caption">Register a new house structure and initial stocking density</span>
+      </main>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="footer-container">
+          <p class="footer-text">&copy; Agri_farms21 Poultry Operations &bull; Cloud Enterprise Architecture &bull; PostgreSQL &amp; REST API</p>
         </div>
-
-        <form id="houseForm" class="form-layout" novalidate>
-          <div class="form-group">
-            <label for="houseName" class="form-label">
-              <span>House Name / Identifier</span>
-              <span class="required-indicator" title="Required">*</span>
-            </label>
-            <input type="text" id="houseName" name="houseName" placeholder="e.g. House 02 - North Barn" class="form-control" required />
-            <span class="field-error" id="houseNameError"></span>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="birdsPlaced" class="form-label">
-                <span>Birds Placed</span>
-                <span class="required-indicator" title="Required">*</span>
-              </label>
-              <div class="input-with-affix">
-                <input type="number" id="birdsPlaced" name="birdsPlaced" min="1" step="1" placeholder="500" class="form-control" required />
-                <span class="affix-tag">flock</span>
-              </div>
-              <span class="field-error" id="birdsPlacedError"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="dateCreated" class="form-label">
-                <span>Date Created</span>
-                <span class="required-indicator" title="Required">*</span>
-              </label>
-              <input type="date" id="dateCreated" name="dateCreated" class="form-control" required />
-              <span class="field-error" id="dateCreatedError"></span>
-            </div>
-          </div>
-
-          <div class="form-footer">
-            <button type="submit" class="btn btn-secondary btn-block" id="createHouseBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-              </svg>
-              <span>Create House</span>
-            </button>
-          </div>
-        </form>
-      </section>
+      </footer>
 
     </div>
+  </div>
 
-    <!-- Historical Daily Records Table -->
-    <section class="card table-card" id="historySection">
-      <div class="card-header table-card-header">
-        <div>
-          <div class="header-icon-title">
-            <span class="section-badge">Audit Log</span>
-            <h2 class="card-title">Daily Records Log</h2>
-          </div>
-          <span class="card-caption">Complete chronological entries logged for the active poultry house</span>
+  <!-- Roadmap Feature Modal (Explains next planned features to stakeholders/lecturer) -->
+  <div class="modal-overlay" id="featureModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge" id="modalBadge">Roadmap Feature</span>
+          <h3 class="modal-title" id="modalTitle">Feature Overview</h3>
         </div>
-        <div class="table-badge" id="recordCountBadge">0 records</div>
-      </div>
-
-      <div id="recordsEmpty" class="empty-state">
-        <div class="empty-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
+        <button type="button" class="btn-icon-close" id="closeModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-        </div>
-        <p>No daily records yet for this poultry house. Submit an entry above to start tracking.</p>
+        </button>
       </div>
-
-      <div class="table-container" id="recordsTableContainer">
-        <table id="recordsTable" class="refined-table" hidden>
-          <thead>
-            <tr>
-              <th scope="col">Date</th>
-              <th scope="col" class="num-col">Mortality (Birds)</th>
-              <th scope="col" class="num-col">Feed Used (kg)</th>
-              <th scope="col" class="num-col">Eggs Collected</th>
-              <th scope="col" class="status-col">Health Indicator</th>
-            </tr>
-          </thead>
-          <tbody id="recordsTableBody"></tbody>
-        </table>
+      <div class="modal-body" id="modalBody">
+        <!-- Injected via JavaScript -->
       </div>
-    </section>
-
-  </main>
-
-  <footer class="app-footer">
-    <div class="footer-container">
-      <p class="footer-text">&copy; Poultry Management System &bull; Clean Architecture &bull; PostgreSQL &amp; REST API</p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="closeModalActionBtn">Dismiss</button>
+      </div>
     </div>
-  </footer>
+  </div>
 
-  <script src="js/app.js"></script>
+  <!-- Stock Movement Dialog Modal -->
+  <div class="modal-overlay" id="stockMovementModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge">Inventory Action</span>
+          <h3 class="modal-title">Record Feed Stock Movement</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="closeStockModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="stockMovementForm">
+        <div class="modal-body">
+          <div class="form-layout">
+            <div class="form-group">
+              <label for="movementType" class="form-label">Action Type</label>
+              <div class="select-wrapper">
+                <select id="movementType" class="form-control select-custom" required>
+                  <option value="REFILL">REFILL (Deliver New Feed into Silo)</option>
+                  <option value="DISPATCH">DISPATCH (Feed Distributed to House)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="siloSelect" class="form-label">Target Silo / Warehouse Bay</label>
+              <div class="select-wrapper">
+                <select id="siloSelect" class="form-control select-custom" required>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="stockBags" class="form-label">Bag Count (50kg/bag)</label>
+                <input type="number" id="stockBags" min="1" step="1" placeholder="20" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="stockUnitPrice" class="form-label">Cost per Bag ($)</label>
+                <input type="number" id="stockUnitPrice" step="0.5" placeholder="32.50" class="form-control" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="stockSupplier" class="form-label">Supplier / Recipient Details</label>
+              <input type="text" id="stockSupplier" placeholder="e.g. Agri-Feeds Ltd Delivery #489" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label for="stockNotes" class="form-label">Notes &amp; Quality Check</label>
+              <input type="text" id="stockNotes" placeholder="Moisture content OK, batch sealed" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelStockModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveStockBtn">Post Movement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Treatment / Vaccine Modal -->
+  <div class="modal-overlay" id="treatmentModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge">Veterinary Health</span>
+          <h3 class="modal-title">Record Vaccine or Medical Treatment</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="closeTreatmentModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="treatmentForm">
+        <div class="modal-body">
+          <div class="form-layout">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="treatmentTypeSelect" class="form-label">Category</label>
+                <div class="select-wrapper">
+                  <select id="treatmentTypeSelect" class="form-control select-custom" required>
+                    <option value="VACCINATION">VACCINATION (Immunity Protocol)</option>
+                    <option value="MEDICATION">MEDICATION / ANTIBIOTIC (Therapeutic)</option>
+                    <option value="DEWORMING">DEWORMING / ANTHELMINTIC</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="treatmentBatchSelect" class="form-label">Target Flock Batch</label>
+                <div class="select-wrapper">
+                  <select id="treatmentBatchSelect" class="form-control select-custom" required>
+                    <option value="BATCH-2026-01">BATCH-2026-01 (House A)</option>
+                    <option value="LAYER-2026-L1">LAYER-2026-L1 (House A)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="medicationName" class="form-label">Medication / Vaccine Name</label>
+              <input type="text" id="medicationName" placeholder="e.g. Newcastle Disease LaSota or Tylosin Tartrate" class="form-control" required />
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="treatmentAdminDate" class="form-label">Date of Administration</label>
+                <input type="date" id="treatmentAdminDate" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="withdrawalDays" class="form-label">Withdrawal Period (Days)</label>
+                <div class="input-with-affix">
+                  <input type="number" id="withdrawalDays" min="0" step="1" value="0" class="form-control" required />
+                  <span class="affix-tag">days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="treatmentDosage" class="form-label">Dosage &amp; Dilution</label>
+                <input type="text" id="treatmentDosage" placeholder="e.g. 1000 doses in 20L skim milk" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="administeredBy" class="form-label">Veterinarian / Officer</label>
+                <input type="text" id="administeredBy" placeholder="e.g. Dr. Osei / Farm Tech" class="form-control" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="treatmentNotes" class="form-label">Observations</label>
+              <input type="text" id="treatmentNotes" placeholder="No adverse reactions observed" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelTreatmentBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveTreatmentBtn">Save Health Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Symptoms Triage Modal -->
+  <div class="modal-overlay" id="triageModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge">Biosecurity Triage</span>
+          <h3 class="modal-title">Mortality Symptoms &amp; Disease Early Warning</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="closeTriageModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="triageForm">
+        <div class="modal-body">
+          <div class="form-layout">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="triageMortality" class="form-label">Birds Affected / Deceased</label>
+                <input type="number" id="triageMortality" min="1" step="1" value="2" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="triageLevel" class="form-label">Urgency Level</label>
+                <div class="select-wrapper">
+                  <select id="triageLevel" class="form-control select-custom" required>
+                    <option value="Low / Normal">Low / Normal (Routine loss)</option>
+                    <option value="Moderate Warning">Moderate Warning (Potential infection)</option>
+                    <option value="Critical Outbreak Alert">Critical Outbreak Alert (Immediate Quarantine)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="primarySymptoms" class="form-label">Observed Clinical Signs</label>
+              <input type="text" id="primarySymptoms" placeholder="e.g. Gasping, green diarrhea, twisted neck, facial swelling" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+              <label for="suspectedCause" class="form-label">Suspected Diagnosis / Vector</label>
+              <input type="text" id="suspectedCause" placeholder="e.g. Coccidiosis, Newcastle variant, heat stress" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label for="triageAction" class="form-label">Containment Action Taken</label>
+              <input type="text" id="triageAction" placeholder="e.g. Footbath recharged, isolated sick birds, dispatched samples to lab" class="form-control" required />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelTriageBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveTriageBtn">Log Biosecurity Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Commercial Invoice Modal (Phase 3 P&L) -->
+  <div class="modal-overlay" id="invoiceModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge">Commercial Accounts</span>
+          <h3 class="modal-title">Create Sales &amp; Revenue Invoice</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="closeInvoiceModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="invoiceForm">
+        <div class="modal-body">
+          <div class="form-layout">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="customerName" class="form-label">Customer / Buyer</label>
+                <input type="text" id="customerName" placeholder="e.g. FreshFarm Foods Market" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="itemCategory" class="form-label">Commodity</label>
+                <div class="select-wrapper">
+                  <select id="itemCategory" class="form-control select-custom" required>
+                    <option value="EGGS">EGGS (Graded Crates of 30)</option>
+                    <option value="BROILERS">BROILERS (Live Harvested Birds)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label for="invoiceQty" class="form-label">Quantity</label>
+                <input type="number" id="invoiceQty" min="1" step="1" placeholder="50" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="invoiceUnitPrice" class="form-label">Unit Price ($)</label>
+                <input type="number" id="invoiceUnitPrice" step="0.05" placeholder="5.80" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="invoicePaymentStatus" class="form-label">Payment Status</label>
+                <div class="select-wrapper">
+                  <select id="invoicePaymentStatus" class="form-control select-custom" required>
+                    <option value="PAID">PAID</option>
+                    <option value="PENDING">PENDING (Receivable)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="invoiceDetails" class="form-label">Commodity Details / Batch</label>
+              <input type="text" id="invoiceDetails" placeholder="Grade A Large / Broiler Avg 2.4kg" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label for="invoiceNotes" class="form-label">Invoice Notes</label>
+              <input type="text" id="invoiceNotes" placeholder="Delivery completed, signed consignment note #89" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelInvoiceBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveInvoiceBtn">Issue Invoice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Batch Harvest / Depletion Modal -->
+  <div class="modal-overlay" id="harvestModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-title">
+          <span class="section-badge">Flock Depletion</span>
+          <h3 class="modal-title">Record Batch Harvest &amp; Depletion</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="closeHarvestModalBtn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="harvestForm">
+        <div class="modal-body">
+          <div class="form-layout">
+            <input type="hidden" id="harvestBatchId" />
+            <div class="form-group">
+              <label class="form-label">Harvesting Batch</label>
+              <div id="harvestBatchDisplay" style="font-weight:700;color:var(--color-primary);">--</div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="harvestedBirds" class="form-label">Birds Harvested / Culled</label>
+                <input type="number" id="harvestedBirds" min="1" step="1" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="harvestedWeightKg" class="form-label">Total Live Weight (kg)</label>
+                <input type="number" id="harvestedWeightKg" step="0.5" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="harvestNotes" class="form-label">Depletion Notes</label>
+              <input type="text" id="harvestNotes" placeholder="Loaded onto truck for meat processing plant" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelHarvestBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveHarvestBtn">Confirm Depletion</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js?v=2.1.0"></script>
 </body>
 </html>

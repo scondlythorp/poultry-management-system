@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const houseRoutes = require("./routes/houseRoutes");
+const batchRoutes = require("./routes/batchRoutes");
+const inventoryRoutes = require("./routes/inventoryRoutes");
+const healthRoutes = require("./routes/healthRoutes");
+const salesRoutes = require("./routes/salesRoutes");
 const { errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
@@ -22,6 +26,10 @@ app.get(["/api/health", "/health"], (req, res) => {
 
 // All house + nested daily-record routes (supports both /api/houses and /houses)
 app.use(["/api/houses", "/houses"], houseRoutes);
+app.use(["/api/batches", "/batches"], batchRoutes);
+app.use(["/api/inventory", "/inventory"], inventoryRoutes);
+app.use(["/api/health-biosecurity", "/health-biosecurity"], healthRoutes);
+app.use(["/api/sales", "/sales"], salesRoutes);
 
 // Catch-all for unknown /api routes.
 app.all("/api/*", (req, res) => {

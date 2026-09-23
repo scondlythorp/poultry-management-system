@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 220" width="100%" height="100%">
+  <defs>
+    <filter id="subtle-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Left Circular Seal / Ring -->
+  <g transform="translate(110, 110)">
+    <!-- Bold Red Circular Outer Ring -->
+    <circle cx="0" cy="0" r="76" fill="none" stroke="#ba1a1a" stroke-width="16" />
+    
+    <!-- Rooster Head Silhouette & Typography -->
+    <!-- Red Comb & Wattle -->
+    <path d="M-8,-26 C-14,-32 -2,-40 2,-32 C6,-38 16,-34 12,-25 C18,-27 24,-20 18,-14 C22,-10 16,-4 10,-8" fill="#ba1a1a" />
+    <!-- Rooster Beak -->
+    <polygon points="12,-16 22,-12 11,-8" fill="#e65100" />
+    <!-- Rooster Eye -->
+    <circle cx="5" cy="-16" r="2" fill="#1e293b" />
+    <!-- Rooster Neck Feathers -->
+    <path d="M-6,-18 C-10,-4 -12,12 -2,18 C2,10 6,2 8,-12" fill="#334155" />
+    <path d="M-2,-8 C4,-6 8,-4 6,4 C4,12 -2,16 -4,14" fill="#ba1a1a" />
+    <!-- Script "Agri" overlay underneath -->
+    <path d="M-36,22 C-20,6 8,4 28,14 C12,16 -8,22 -24,28 C-32,30 -38,26 -36,22 Z" fill="#1e293b" opacity="0.9" />
+    <text x="-4" y="24" font-family="'Cinzel', Georgia, serif" font-size="19" font-style="italic" font-weight="700" fill="#1e293b" text-anchor="middle">Agri</text>
+  </g>
+
+  <!-- Right Logotype: AGRI Farms21 -->
+  <!-- Top: AGRI with distinctive crescent and stars embellishments -->
+  <g fill="#1e293b">
+    <!-- Letter A -->
+    <g transform="translate(245, 112)">
+      <text font-family="'Cinzel', 'Times New Roman', Georgia, serif" font-size="62" font-weight="900" letter-spacing="2">A</text>
+      <!-- Crescent / Stars in A -->
+      <path d="M12,-38 C8,-32 10,-24 16,-22 C12,-22 8,-26 8,-34 Z" fill="#ffffff" />
+      <polygon points="20,-42 22,-37 27,-37 23,-34 25,-29 20,-32 16,-29 18,-34 14,-37 19,-37" fill="#1e293b" transform="scale(0.3) translate(15, -110)" />
+    </g>
+
+    <!-- Letter G -->
+    <g transform="translate(295, 112)">
+      <text font-family="'Cinzel', 'Times New Roman', Georgia, serif" font-size="62" font-weight="900" letter-spacing="2">G</text>
+      <!-- Sparkle stars inside G -->
+      <polygon points="20,-36 21.5,-31 26,-31 22.5,-28 24,-23 20,-26 16,-23 17.5,-28 14,-31 18.5,-31" fill="#ffffff" transform="scale(0.65) translate(16, -10)" />
+    </g>
+
+    <!-- Letter R -->
+    <g transform="translate(352, 112)">
+      <text font-family="'Cinzel', 'Times New Roman', Georgia, serif" font-size="62" font-weight="900" letter-spacing="2">R</text>
+      <polygon points="20,-36 21.5,-31 26,-31 22.5,-28 24,-23 20,-26 16,-23 17.5,-28 14,-31 18.5,-31" fill="#ffffff" transform="scale(0.6) translate(28, -8)" />
+    </g>
+
+    <!-- Letter I -->
+    <g transform="translate(410, 112)">
+      <text font-family="'Cinzel', 'Times New Roman', Georgia, serif" font-size="62" font-weight="900" letter-spacing="2">I</text>
+      <polygon points="20,-36 21.5,-31 26,-31 22.5,-28 24,-23 20,-26 16,-23 17.5,-28 14,-31 18.5,-31" fill="#ffffff" transform="scale(0.5) translate(2, -25)" />
+    </g>
+  </g>
+
+  <!-- Bottom: Farms21 (Italic, Clean Modern Sans) -->
+  <text x="245" y="166" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="52" font-style="italic" font-weight="800" fill="#2d3748" letter-spacing="-0.5">Farms21</text>
+</svg>

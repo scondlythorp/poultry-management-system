@@ -1,7 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#14532d"/>
-  <path d="M16 7c2.5 0 4.5 2 4.5 4.5 0 1.2-.5 2.3-1.3 3.1 2.2 1 3.8 3.2 3.8 5.9 0 3.6-2.9 6.5-6.5 6.5s-6.5-2.9-6.5-6.5c0-2.7 1.6-4.9 3.8-5.9-.8-.8-1.3-1.9-1.3-3.1C11.5 9 13.5 7 16 7z" fill="#fef08a"/>
-  <circle cx="17.5" cy="10.5" r="1" fill="#713f12"/>
-  <polygon points="19.5,11.5 23,12.5 19.5,13.5" fill="#f97316"/>
-  <path d="M15 6c.5-1.5 2-1.5 2.5 0" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Red Ring -->
+  <circle cx="50" cy="50" r="44" fill="#ffffff" stroke="#ba1a1a" stroke-width="10" />
+  <!-- Rooster Head -->
+  <!-- Comb -->
+  <path d="M46 28 C42 22 50 18 52 23 C55 19 62 21 59 27 C63 26 67 31 63 35" fill="#ba1a1a" />
+  <!-- Beak -->
+  <polygon points="60,35 68,38 60,41" fill="#ea580c" />
+  <!-- Eye -->
+  <circle cx="56" cy="34" r="1.5" fill="#0f172a" />
+  <!-- Wattle -->
+  <path d="M52 40 C56 42 58 45 57 48 C55 52 50 51 50 46" fill="#ba1a1a" />
+  <!-- Feathers / Neck -->
+  <path d="M46 32 C41 40 40 50 46 54 C50 48 52 42 53 35" fill="#334155" />
+  <!-- Agri script base text -->
+  <path d="M28 58 C38 52 55 52 68 56 C58 60 45 64 34 65 Z" fill="#1e293b" opacity="0.95" />
+  <text x="49" y="60" font-family="'Cinzel', Georgia, serif" font-size="12" font-style="italic" font-weight="800" fill="#ffffff" text-anchor="middle">Agri</text>
 </svg>
